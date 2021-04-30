@@ -1,13 +1,15 @@
 package com.ibm.codeengine;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.sql.Timestamp;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import com.ibm.cloud.objectstorage.SDKGlobalConfiguration;
 
 import net.coobird.thumbnailator.Thumbnails;
-import net.coobird.thumbnailator.name.Rename;
 
 /**
  * See also
@@ -35,7 +37,7 @@ public class Job {
         List<String> images = cos.getObjectKeys(bucketName, jobIndex + "__");
 
         for (String image : images) {
-            if (image.endsWith("-thumb")) {
+            if (image.contains("-thumb")) {
                 System.out.println("Skipping '" + image + "' as it already has a thumbnail");
                 continue;
             }
@@ -47,11 +49,16 @@ public class Job {
                 String targetPath = cos.downloadObject(bucketName, image);
                 System.out.println("Downloaded to: " + targetPath);
 
+                // Make sure that the same file extension is used for the thumbnail, too
+                String fileExtension = image.substring(image.lastIndexOf('.'));
+                String thumbnailSuffix = "-thumb" + fileExtension;
+                System.out.println("thumbnailSuffix: " + thumbnailSuffix);
+
                 // Create the Thumbnail
-                Thumbnails.of(targetPath).size(50, 50).toFile(targetPath + "-thumb");
+                Thumbnails.of(targetPath).size(50, 50).toFile(targetPath + thumbnailSuffix);
 
                 // Upload the object to the bucket
-                cos.uploadObject(bucketName, image + "-thumb", new File(targetPath + "-thumb.png"));
+                cos.uploadObject(bucketName, image + thumbnailSuffix, new File(targetPath + thumbnailSuffix));
 
                 System.out.println("Processing " + image + " [done]");
             } catch (Exception e) {
