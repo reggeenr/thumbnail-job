@@ -20,12 +20,14 @@ public class Job {
 
         SDKGlobalConfiguration.IAM_ENDPOINT = "https://iam.cloud.ibm.com/identity/token";
 
-        String bucketName = System.getenv("BUCKET");
         String apiKey = System.getenv("CLOUD_OBJECT_STORAGE_APIKEY");
         String serviceInstanceId = System.getenv("CLOUD_OBJECT_STORAGE_RESOURCE_INSTANCE_ID");
+
+        String bucketName = System.getenv("BUCKET");
         System.out.println("BUCKET: " + (bucketName != null ? bucketName : "NOT set"));
 
-        String jobIndex = System.getenv("BUCKET");
+        String jobIndex = System.getenv("JOB_INDEX");
+        System.out.println("JOB_INDEX: " + jobIndex);
 
         System.out.println("Current time: " + new Timestamp(System.currentTimeMillis()).toString());
 
