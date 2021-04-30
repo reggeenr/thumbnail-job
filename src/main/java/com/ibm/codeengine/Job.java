@@ -18,8 +18,6 @@ import net.coobird.thumbnailator.Thumbnails;
 public class Job {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
-
         SDKGlobalConfiguration.IAM_ENDPOINT = "https://iam.cloud.ibm.com/identity/token";
 
         String apiKey = System.getenv("CLOUD_OBJECT_STORAGE_APIKEY");
@@ -58,7 +56,7 @@ public class Job {
                 Thumbnails.of(targetPath).size(50, 50).toFile(targetPath + thumbnailSuffix);
 
                 // Upload the object to the bucket
-                cos.uploadObject(bucketName, image + thumbnailSuffix, new File(targetPath + thumbnailSuffix));
+                cos.uploadObject(bucketName, image + "-thumb", new File(targetPath + thumbnailSuffix));
 
                 System.out.println("Processing " + image + " [done]");
             } catch (Exception e) {
